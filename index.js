@@ -13,9 +13,9 @@ var cors = require('cors');
 var querystring = require('querystring');
 var cookieParser = require('cookie-parser');
 
-var client_id = 'abf9469f38114b32beac7c9bb2d6a25f'; // Your client id
-var client_secret = 'c9ca2411bdc4468b9ce53797b1e15b5b'; // Your secret
-var redirect_uri = 'http://localhost:8888/callback/'; // Your redirect uri
+var client_id = '0ce28a53227f4b04ac23dca80320155a'; // Your client id
+var client_secret = 'b8eec17b6ac142768bd96f2d3658379a'; // Your secret
+var redirect_uri = 'https://server.cutplay.io/callback/'; // Your redirect uri
 
 
 
