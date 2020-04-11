@@ -15,7 +15,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '0ce28a53227f4b04ac23dca80320155a'; // Your client id
 var client_secret = 'b8eec17b6ac142768bd96f2d3658379a'; // Your secret
-var redirect_uri = 'https://aserver.cutplay.io/callback/'; // Your redirect uri
+var redirect_uri = process.env.CUTPLAY_LOCAL || 'https://aserver.cutplay.io/callback/'; // Your redirect uri
 
 
 
@@ -46,7 +46,11 @@ app.get('/login', function (req, res) {
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
-
+  if(req.query.local){
+    res.cookie("redirect", "local");
+  } else {
+    res.cookie("redirect", "original");
+  }
   // your application requests authorization
   var scope = 'user-read-private user-read-email user-read-playback-state playlist-modify-private app-remote-control playlist-modify-public streaming';
   res.redirect('https://accounts.spotify.com/authorize?' +
@@ -67,6 +71,8 @@ app.get('/callback', function (req, res) {
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
+
+  var redirectBase = req.cookies["redirect"] == "local" ? "http://localhost:3000" : "https://cutplay.io"
 
   if (state === null || state !== storedState) {
     res.redirect('/#' +
@@ -106,13 +112,13 @@ app.get('/callback', function (req, res) {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('http://localhost:3000/#' +
+        res.redirect(redirectBase + '/#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
           }));
       } else {
-        res.redirect('http://localhost:3000/#' +
+        res.redirect(redirectBase + '/#' +
           querystring.stringify({
             error: 'invalid_token'
           }));
