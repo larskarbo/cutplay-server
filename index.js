@@ -11,11 +11,13 @@ var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
 var cors = require('cors');
 var querystring = require('querystring');
+var fs = require('fs');
 var cookieParser = require('cookie-parser');
 
 var client_id = '0ce28a53227f4b04ac23dca80320155a'; // Your client id
 var client_secret = 'b8eec17b6ac142768bd96f2d3658379a'; // Your secret
 var redirect_uri = process.env.CUTPLAY_LOCAL || 'https://aserver.cutplay.io/callback/'; // Your redirect uri
+var bodyParser = require('body-parser')
 
 
 
@@ -41,6 +43,19 @@ var app = express();
 app.use(express.static(__dirname + '/public'))
   .use(cors())
   .use(cookieParser());
+  app.use( bodyParser.json() );       // to support JSON-encoded bodies
+  app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+    extended: true
+  }));
+
+app.post('/feedback', function(req, res) {
+    var feedback = req.body.feedback,
+        user = req.body.user;
+
+    fs.appendFileSync('feedback.txt', feedback + " - " + JSON.stringify(user) + "\n");
+    // ...
+    res.send("good")
+});
 
 app.get('/login', function (req, res) {
 
