@@ -48,6 +48,9 @@ app.use(express.static(__dirname + '/public'))
     extended: true
   }));
 
+app.use("/feedback.txt", express.static(__dirname + '/feedback.txt'));
+
+
 app.post('/feedback', function(req, res) {
     var feedback = req.body.feedback,
         user = req.body.user;
